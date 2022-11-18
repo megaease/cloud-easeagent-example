@@ -1,0 +1,3 @@
+FROM megaease/java-apm-user-list-example:1.0.0
+
+COPY ./easeagent.jar /app

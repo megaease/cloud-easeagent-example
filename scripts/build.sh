@@ -13,7 +13,8 @@ cd $SCRIPT_PATH
 
 mkdir -p $BIN_PATH/go
 cd ../go-admin
-go build && mv go-admin $BIN_PATH/go/ 
+mkdir -p $BIN_PATH/go/linux_amd64
+go build && mv go-admin $BIN_PATH/go/ && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build && mv go-admin $BIN_PATH/go/linux_amd64/
 cp resources/scripts/* $BIN_PATH/go/
 cd $SCRIPT_PATH
 
