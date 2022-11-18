@@ -14,6 +14,7 @@ $configPath = getenv('EASEAGENT_SDK_CONFIG_FILE');
 if ($configPath === false) {
     $configPath = __DIR__ . '/agent_frontend.yml';
 }
+echo "<p>configPath: " . $configPath . "</p>";
 $agent = AgentBuilder::buildFromYaml($configPath);
 $agent->serverTransaction(function ($span) use ($agent) {
     $useListURL = getenv('USER_LIST_URL');

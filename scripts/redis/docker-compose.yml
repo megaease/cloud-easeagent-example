@@ -15,9 +15,6 @@ services:
     restart: on-failure:3
     ports:
      - "6379:6379"
-    volumes:
-      - ./redis.conf:/usr/local/etc/redis/redis.conf
-    command: "redis-server /usr/local/etc/redis/redis.conf"
     labels:
       - service_name=redis
       - image_name=redis:latest

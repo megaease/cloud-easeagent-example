@@ -19,6 +19,7 @@ cd $SCRIPT_PATH
 
 mkdir -p $BIN_PATH/php
 cd ../php-frontend
+# rm -rf composer.lock && composer install
 cp frontend.php $BIN_PATH/php/ && cp -r vendor $BIN_PATH/php/
 cp resources/scripts/* $BIN_PATH/php/
 cd $SCRIPT_PATH
