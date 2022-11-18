@@ -12,8 +12,12 @@ cd $SCRIPT_PATH
 
 mkdir -p $SCRIPT_PATH/bin/go
 cd go-admin
-go build && mv go-admin $SCRIPT_PATH/bin/go/ && cd $SCRIPT_PATH
+go build && mv go-admin $SCRIPT_PATH/bin/go/ 
 cp resources/scripts/bootstrap.sh $SCRIPT_PATH/bin/go/
+cd $SCRIPT_PATH
 
 mkdir -p $SCRIPT_PATH/bin/php
 cd php-frontend
+cp frontend.php $SCRIPT_PATH/bin/php/ && cp -r vendor $SCRIPT_PATH/bin/php/
+cp resources/scripts/bootstrap.sh $SCRIPT_PATH/bin/php/
+cd $SCRIPT_PATH

@@ -24,6 +24,6 @@
         }
     ],
     "scripts": {
-        "run-frontend": "EASEAGENT_SDK_CONFIG_FILE=/Users/beyond/GoLang/src/github.com/megaease/easeagent-megacloud-example/bin/configs/agent_frontend.yml php -S '0.0.0.0:8081' frontend.php"
+        "run-frontend": "php -S '0.0.0.0:8081' frontend.php"
     }
 }

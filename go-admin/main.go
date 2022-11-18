@@ -60,7 +60,7 @@ func LoadSpecFromYamlFile(filePath string) (*zipkin.Spec, error) {
 	if err != nil {
 		return nil, fmt.Errorf("read config file :%s failed: %v", filePath, err)
 	}
-	fmt.Println(string(buff))
+	fmt.Println("config path : " + filePath)
 	var body map[string]interface{}
 	err = yaml.Unmarshal(buff, &body)
 	if err != nil {
