@@ -17,32 +17,76 @@
 
 package com.megaease.easeagent.example.service;
 
-import com.megaease.easeagent.example.dao.UserMapper;
 import com.megaease.easeagent.example.model.User;
+import com.megaease.easeagent.example.server.JdkHttpServer;
+import org.apache.http.HttpEntity;
+import org.apache.http.ParseException;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Component
 public class UserService {
-    @Resource
-    private UserMapper userMapper;
-
-    public UserService(UserMapper userMapper) {
-        this.userMapper = userMapper;
+    static {
+        JdkHttpServer.INSTANCE.start();
     }
 
+    private final CloseableHttpClient httpclient = HttpClients.createDefault();
+
     public List<User> getUsers() {
-        return this.userMapper.selectAll();
+        List<User> users = new ArrayList<>();
+        User user1 = new User();
+        user1.setName("admin");
+        user1.setCreateTime(new Date());
+        user1.setUserId(1);
+        users.add(user1);
+        User user2 = new User();
+        user2.setName("ZARD");
+        user2.setCreateTime(new Date());
+        user2.setUserId(2);
+        users.add(user2);
+        for (User user : users) {
+            user.setMessage(callHttpServer());
+        }
+        return users;
+    }
+
+    private String callHttpServer() {
+        String context = null;
+        try {
+            // 创建httpget.
+            HttpGet httpget = new HttpGet(JdkHttpServer.INSTANCE.getUrl());
+            CloseableHttpResponse response = httpclient.execute(httpget);
+            try {
+                // 获取响应实体
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+                    context = EntityUtils.toString(entity);
+                }
+            } catch (Exception e) {
+                throw e;
+            } finally {
+                response.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return context;
     }
 
     public User addUser(String name, Date createTime) {
         User user = new User();
         user.setName(name);
         user.setCreateTime(createTime);
-        this.userMapper.insert(user);
         return user;
     }
 }
