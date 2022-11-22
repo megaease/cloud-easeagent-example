@@ -1,15 +1,11 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"os"
-	"time"
-
-	redis "github.com/go-redis/redis/v9"
 
 	"github.com/megaease/easeagent-sdk-go/agent"
 	"github.com/megaease/easeagent-sdk-go/plugins"
@@ -23,7 +19,6 @@ const (
 
 var easeagent = newAgent(hostPort)
 var zipkinAgent = easeagent.GetPlugin(zipkin.NAME).(*zipkin.Zipkin)
-var rdb = createRedisClient()
 
 // new agent
 func newAgent(hostport string) *agent.Agent {
@@ -83,22 +78,6 @@ func LoadSpecFromYamlFile(filePath string) (*zipkin.Spec, error) {
 	return &spec, nil
 }
 
-func createRedisClient() *redis.Client {
-	hostAndPort := os.Getenv("REDIS_HOST_AND_PORT")
-	if hostAndPort == "" {
-		hostAndPort = "localhost:6379"
-	}
-	password := os.Getenv("REDIS_PASSWORD")
-	if hostAndPort == "" {
-		hostAndPort = ""
-	}
-	return redis.NewClient(&redis.Options{
-		Addr:     hostAndPort,
-		Password: password, // no password set
-		DB:       0,        // use default DB
-	})
-}
-
 func isRoot() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		values := r.URL.Query()
@@ -107,54 +86,22 @@ func isRoot() http.HandlerFunc {
 			w.Write([]byte("false"))
 			return
 		}
-		result, err := getOrPushToRedis(r, arg, func() string {
-			if arg == "admin" {
-				return "true"
-			} else {
-				return "false"
-			}
-		})
-		if err != nil {
-			w.WriteHeader(500)
-			return
+		result := ""
+		if arg == "admin" {
+			result = "true"
+		} else {
+			result = "false"
 		}
+
+		//send redis span
+		redisSpan, _ := zipkinAgent.StartMWSpanFromCtx(r.Context(), "redis-get_key", zipkin.Redis)
+		if endpoint, err := zipkin.NewEndpoint("redis-local_server", "127.0.0.1:8090"); err == nil {
+			redisSpan.SetRemoteEndpoint(endpoint)
+		}
+		redisSpan.Finish()
+
 		w.Write([]byte(result))
 	}
-}
-
-func getOrPushToRedis(r *http.Request, key string, valueSuppler func() string) (string, error) {
-	ctx := context.Background()
-	span, _ := zipkinAgent.StartMWSpanFromCtx(r.Context(), "get", zipkin.Redis)
-	if endpoint, err := zipkin.NewEndpoint("redis-user-admin", rdb.Options().Addr); err == nil {
-		span.SetRemoteEndpoint(endpoint)
-	}
-	value := rdb.Get(ctx, key)
-	if value.Err() == nil {
-		redisResult, err := value.Result()
-		if err != nil {
-			span.Tag("error", err.Error())
-			span.Finish()
-			return "", fmt.Errorf("get result from redis error %v", err)
-		}
-		span.Finish()
-		return redisResult, nil
-	} else {
-		span.Annotate(time.Now(), "can not found result from redis.")
-		span.Finish()
-	}
-	result := valueSuppler()
-	addSpan, _ := zipkinAgent.StartMWSpanFromCtx(r.Context(), "set", zipkin.Redis)
-	if endpoint, err := zipkin.NewEndpoint("redis-user-admin", rdb.Options().Addr); err == nil {
-		addSpan.SetRemoteEndpoint(endpoint)
-	}
-	status := rdb.Set(ctx, key, result, time.Second)
-	if status.Err() != nil {
-		addSpan.Tag("error", status.Err().Error())
-		addSpan.Finish()
-		return "", fmt.Errorf("set redis error %v", status.Err())
-	}
-	addSpan.Finish()
-	return result, nil
 }
 
 func main() {
