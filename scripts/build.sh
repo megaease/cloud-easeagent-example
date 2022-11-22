@@ -10,6 +10,7 @@ cd ../java-user-list
 mvn clean install -Dmaven.test.skip && cp target/java-user-list-1.0.0.jar $BIN_PATH/java/
 cp resources/scripts/* $BIN_PATH/java/
 cd $SCRIPT_PATH
+cp mysql/db.sql $BIN_PATH/java/
 
 mkdir -p $BIN_PATH/go
 cd ../go-admin

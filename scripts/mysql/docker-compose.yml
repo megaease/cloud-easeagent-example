@@ -14,7 +14,6 @@ services:
       - MYSQL_ROOT_PASSWORD=root123
       - MYSQL_USER=megaease
       - MYSQL_PASSWORD=8a4b041e
-      - MYSQL_DATABASE=easeservicemonitor
 
     volumes:
     - ./db.sql:/docker-entrypoint-initdb.d/db.sql
