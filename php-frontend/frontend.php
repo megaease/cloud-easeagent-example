@@ -6,68 +6,47 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif)$/', $_SERVER["REQUEST_URI"])) {
 
 use Easeagent\AgentBuilder;
 use Easeagent\HTTP\HttpUtils;
-use GuzzleHttp\Client;
+use Zipkin\Endpoint;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$configPath = getenv('EASEAGENT_SDK_CONFIG_FILE');
-if ($configPath === false) {
-    $configPath = __DIR__ . '/agent_frontend.yml';
-}
-echo "<p>configPath: " . $configPath . "</p>";
-$agent = AgentBuilder::buildFromYaml($configPath);
+$agent = AgentBuilder::buildFromYaml(getenv('EASEAGENT_SDK_CONFIG_FILE'));
+
 $agent->serverTransaction(function ($span) use ($agent) {
-    $useListURL = getenv('USER_LIST_URL');
-    if ($useListURL === false) {
-        $useListURL = "http://127.0.0.1:18888/user/list";
+    // Open the table
+    echo '<table border="1" cellspacing="0" cellpadding="0">';
+    echo "<tr>";
+    echo "<th>Name</th>";
+    echo "<th>root</th>";
+    echo "<th>Create Time</th>";
+    echo "</tr>";
+
+    $checkRootSpan = $agent->startClientSpan($span, "check-root");
+    try {
+        // $headers = $agent->injectorHeaders($checkRootSpan);
+        /* HTTP Request to the backend */
+        // $httpClient = new Client();
+        // $request = new \GuzzleHttp\Psr7\Request('POST', 'localhost:9000', $headers);
+        // $response = $httpClient->send($request);
+        /* Save Request info */
+        // HttpUtils::finishSpan($childSpan, $request->getMethod(), $request->getUri()->getPath(), $response->getStatusCode());
+        HttpUtils::finishSpan($checkRootSpan, "GET", "/checkroot", 200);
+    } catch (Exception $e) {
+        $checkRootSpan->setError($e);
+        $checkRootSpan->finish();
     }
-    $checkRootURL = getenv('CHECK_ROOT_URL');
-    if ($checkRootURL === false) {
-        $checkRootURL = "http://127.0.0.1:8090/is_root";
-    }
 
-    $httpClient = new Client();
-    $useListSpan = $agent->startClientSpan($span, "get-user-list");
-    $request = new \GuzzleHttp\Psr7\Request('GET', $useListURL, $agent->injectorHeaders($useListSpan));
-    $response = $httpClient->send($request);
-    HttpUtils::finishSpan($useListSpan, $request->getMethod(), $request->getUri()->getPath(), $response->getStatusCode());
-    $json = $response->getBody();
+    $mysqlSpan = $agent->startMiddlewareSpan($span,  'user:get_list:mysql_query', Type::MySql);
+    $mysqlSpan->setRemoteEndpoint(Endpoint::create("mysql-user", "0.0.0.0", null, 8081));
+    usleep(50000);
+    $mysqlSpan->finish();
 
-    $data =  json_decode($json);
+    // Output a row
+    echo "<tr>";
+    echo "<td>admin</td>";
+    echo "<td>true</td>";
+    echo "<td>2022</td>";
+    echo "</tr>";
 
-    if (count($data)) {
-        // Open the table
-        echo '<table border="1" cellspacing="0" cellpadding="0">';
-        echo "<tr>";
-        echo "<th>Name</th>";
-        echo "<th>root</th>";
-        echo "<th>Create Time</th>";
-        echo "</tr>";
-
-        // Cycle through the array
-        foreach ($data as $stand) {
-
-            $checkRootSpan = $agent->startClientSpan($span, "check-root");
-            $request = new \GuzzleHttp\Psr7\Request('GET', $checkRootURL . "?name=" . $stand->name, $agent->injectorHeaders($checkRootSpan));
-            $isRoot = "unknow";
-            try {
-                $response = $httpClient->send($request);
-                if ($response->getStatusCode() == 200) {
-                    $isRoot = $response->getBody();
-                }
-                HttpUtils::finishSpan($checkRootSpan, $request->getMethod(), $request->getUri()->getPath(), $response->getStatusCode());
-            } catch (Exception $e) {
-                $checkRootSpan->setError($e);
-                $checkRootSpan->finish();
-            }
-            // Output a row
-            echo "<tr>";
-            echo "<td>" . $stand->name . "</td>";
-            echo "<td>" . $isRoot . "</td>";
-            echo "<td>" . $stand->createTime . "</td>";
-            echo "</tr>";
-        }
-
-        echo "</table>";
-    }
+    echo "</table>";
 });
