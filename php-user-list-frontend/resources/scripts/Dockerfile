@@ -1,8 +1,8 @@
 FROM php:latest
 
-RUN apk add --no-cache bash
-RUN apk add --no-cache ca-certificates
-RUN apk add  --no-cache curl
+# RUN apk add --no-cache bash
+# RUN apk add --no-cache ca-certificates
+# RUN apk add  --no-cache curl
 RUN mkdir /app
 WORKDIR /app
 ADD ./frontend.php /app/

@@ -4,19 +4,15 @@ if (preg_match('/\.(?:png|jpg|jpeg|gif)$/', $_SERVER["REQUEST_URI"])) {
     return false;    // serve the requested resource as-is.
 }
 
+use Easeagent\Agent;
 use Easeagent\AgentBuilder;
 use Easeagent\HTTP\HttpUtils;
 use GuzzleHttp\Client;
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-$configPath = getenv('EASEAGENT_SDK_CONFIG_FILE');
-if ($configPath === false) {
-    $configPath = __DIR__ . '/agent_frontend.yml';
-}
-echo "<p>configPath: " . $configPath . "</p>";
-$agent = AgentBuilder::buildFromYaml($configPath);
-$agent->serverTransaction(function ($span) use ($agent) {
+$agent = AgentBuilder::buildFromYaml(getenv('EASEAGENT_CONFIG'));
+$agent->serverReceive(function ($span) use ($agent) {
     $useListURL = getenv('USER_LIST_URL');
     if ($useListURL === false) {
         $useListURL = "http://127.0.0.1:18888/user/list";

@@ -9,4 +9,4 @@ if [ "$tag" == "" ];then
     exit
 fi
 
-docker build -f ./DockerfileRebuild . -t megaease/java-apm-user-list-example:$tag
+docker build -f ./DockerfileRebuild . -t megaease/java-apm-user-list-mysql-example:$tag

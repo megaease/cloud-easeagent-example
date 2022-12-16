@@ -19,12 +19,11 @@ services:
   go-user-admin:
     depends_on:
       - redis_db
-    container_name: go-user-admin
-    image: megaease/go-apm-use-admin-example:1.0.0
+    container_name: go-user-admin-redis
+    image: megaease/go-apm-use-admin-redis-example:1.0.0
     environment:
-      EASEAGENT_SDK_CONFIG_FILE: "/app/agent.yml"
       REDIS_HOST_AND_PORT: "redis_db:6379"
     ports:
-      - "8090:8090"
+      - "8090"
 
 

@@ -6,20 +6,19 @@ services:
       - ./db.sql:/docker-entrypoint-initdb.d/db.sql
     restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=root123
-      - MYSQL_USER=megaease
-      - MYSQL_PASSWORD=8a4b041e
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_USER: megaease
+      MYSQL_PASSWORD: demo_password
 
   java-user-list:
     depends_on:
       - mysql_db
     container_name: java-user-list
-    image: megaease/java-apm-user-list-example:1.0.0
+    image: megaease/java-apm-user-list-mysql-example:1.0.0
     environment:
-      JAVA_OPTS: "-javaagent:/app/easeagent.jar"
       DB_HOST: mysql_db
       DB_PORT: 3306
     ports:
-      - "18888:18888"
+      - "18888"
 
 

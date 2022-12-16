@@ -1,3 +1,5 @@
 *.code-workspace
 bin
 .history/
+**/.history/
+.DS_Store

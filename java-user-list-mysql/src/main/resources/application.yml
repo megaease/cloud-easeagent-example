@@ -23,9 +23,9 @@ spring:
       max-request-size: 10MB
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/db_demo?useUnicode=true&characterEncoding=utf-8&autoReconnectForPools=true&autoReconnect=true
-    username: easeagent_example
-    password: demo_password
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:db_demo}?useUnicode=true&characterEncoding=utf-8&autoReconnectForPools=true&autoReconnect=true
+    username: ${DB_USER:easeagent_example}
+    password: ${DB_PASSWORD:demo_password}
     hikari:
       minimum-idle: 10
       maximum-pool-size: 15

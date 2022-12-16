@@ -2,9 +2,9 @@ version: '3'
 services:
   php-user-frontend:
     container_name: php-user-frontend
-    image: megaease/php-apm-frontend-example:1.0.0
+    image: megaease/php-apm-user-list-frontend-example:1.0.0
     environment:
-      USER_LIST_URL: "http://192.168.0.111:18888/user/list"
-      CHECK_ROOT_URL: "http://192.168.0.111:8090/is_root"
+      USER_LIST_URL: "http://docker.for.mac.localhost:18888/user/list"
+      CHECK_ROOT_URL: "http://docker.for.mac.localhost:8090/is_root"
     ports:
       - "8081:8081"
