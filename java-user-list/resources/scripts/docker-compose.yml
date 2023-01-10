@@ -1,9 +1,0 @@
-version: '3'
-services:
-  java-user-list:
-    container_name: java-user-list
-    image: megaease/java-apm-user-list-example:1.0.0
-    ports:
-      - "18888"
-
-
