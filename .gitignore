@@ -3,3 +3,4 @@ bin
 .history/
 **/.history/
 .DS_Store
+.vscode
