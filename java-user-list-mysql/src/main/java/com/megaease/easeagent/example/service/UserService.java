@@ -45,4 +45,15 @@ public class UserService {
         this.userMapper.insert(user);
         return user;
     }
+
+    public void delete(String name) {
+        if ("admin".equals(name)) {
+            throw new RuntimeException("can not delte admin.");
+        }
+        for (User users : getUsers()) {
+            if (users.getName().equals(name)) {
+                this.userMapper.deleteByPrimaryKey(users.getUserId());
+            }
+        }
+    }
 }

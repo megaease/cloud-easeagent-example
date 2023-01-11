@@ -38,6 +38,14 @@ public class UserController {
         return this.userService.addUser(name, new Date());
     }
 
+    @RequestMapping("/user/delete/{name}")
+    public void delete(@PathVariable("name") String name) {
+        if (name == null || name.length() <= 0) {
+            return;
+        }
+        this.userService.delete(name);
+    }
+
     @RequestMapping("/user/add")
     public User add() {
         String name = "easeagent-" + System.currentTimeMillis();
