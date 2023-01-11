@@ -22,6 +22,11 @@ $agent->serverReceive(function ($span) use ($agent) {
         $checkRootURL = "http://127.0.0.1:8090/is_root";
     }
 
+    $netURL = getenv('NET_URL');
+    if ($netURL === false) {
+        $netURL = "https://localhost:7116/user";
+    }
+
     $httpClient = new Client();
     $useListSpan = $agent->startClientSpan($span, "get-user-list");
     $request = new \GuzzleHttp\Psr7\Request('GET', $useListURL, $agent->injectorHeaders($useListSpan));
@@ -31,6 +36,21 @@ $agent->serverReceive(function ($span) use ($agent) {
 
     $data =  json_decode($json);
 
+    echo '<script type="text/javascript">',
+    'function addUser() {
+        var name = document.getElementById("fname").value
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() { 
+            if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+                console.log(xmlHttp.responseText);
+            setTimeout(function(){
+                window.location.reload(1);
+                }, 1000);
+        }
+        xmlHttp.open("GET", "' . $netURL . '?name=" + name, true); // true for asynchronous 
+        xmlHttp.send(null);
+    }',
+    '</script><br/>';
     if (count($data)) {
         // Open the table
         echo '<table border="1" cellspacing="0" cellpadding="0">';
@@ -38,6 +58,7 @@ $agent->serverReceive(function ($span) use ($agent) {
         echo "<th>Name</th>";
         echo "<th>root</th>";
         echo "<th>Create Time</th>";
+        echo "<th>Action</th>";
         echo "</tr>";
 
         // Cycle through the array
@@ -61,8 +82,16 @@ $agent->serverReceive(function ($span) use ($agent) {
             echo "<td>" . $stand->name . "</td>";
             echo "<td>" . $isRoot . "</td>";
             echo "<td>" . $stand->createTime . "</td>";
+            echo '<td></td>';
+            // echo "<td><a href=\"" . $netURL . "?name=" . $stand->name . "\" class=\"button\" data-method=\"delete\">DELETE</a></td>";
             echo "</tr>";
         }
+        echo '<tr>
+        <td><input type="text" id="fname" name="fname"></td>
+        <td></td>
+        <td></td>
+        <td><input type = "button" onclick = "addUser(\'aaa\')" value = "ADD"></td>
+        </tr>';
 
         echo "</table>";
     }
