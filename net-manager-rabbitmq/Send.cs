@@ -33,7 +33,6 @@ namespace net.manager.rabbitmq
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
-
                 channel.QueueDeclare(queue: queue,
                                      durable: false,
                                      exclusive: false,
@@ -46,6 +45,7 @@ namespace net.manager.rabbitmq
                 props.Headers = new Dictionary<string, Object>();
                 foreach (var item in Agent.InjectToDict(trace))
                 {
+                    Console.WriteLine($"Inject key:{item.Key} value:{item.Value}");
                     props.Headers.Add(item.Key, item.Value);
                 }
 

@@ -27,5 +27,14 @@ cp frontend.php $BIN_PATH/php-user-list/ && cp -r vendor $BIN_PATH/php-user-list
 cp resources/scripts/* $BIN_PATH/php-user-list/
 cd $SCRIPT_PATH
 
+mkdir -p $BIN_PATH/net-manager-rabbitmq
+mkdir -p $BIN_PATH/net-manager-rabbitmq/publish
+cd ../net-manager-rabbitmq
+dotnet publish -c Release -o ./publish
+cp -r publish/* $BIN_PATH/net-manager-rabbitmq/publish/
+cp resources/scripts/* $BIN_PATH/net-manager-rabbitmq/
+cd $SCRIPT_PATH
+
 cp -r mysql $BIN_PATH/
 cp -r redis $BIN_PATH/
+cp -r rabbitmq $BIN_PATH/

@@ -5,11 +5,19 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>net.manager.rabbitmq</RootNamespace>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- <PackageReference Include="easeagent" Version="0.0.1" /> -->
     <PackageReference Include="RabbitMQ.Client" Version="6.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="/Users/beyond/Net/github/megaease/easeagent-sdk-net/Src/easeagent.csproj" />
+  </ItemGroup>
+
 
 </Project>

@@ -24,7 +24,7 @@ $agent->serverReceive(function ($span) use ($agent) {
 
     $netURL = getenv('NET_URL');
     if ($netURL === false) {
-        $netURL = "https://localhost:7116/user";
+        $netURL = "http://localhost:7116/user";
     }
 
     $httpClient = new Client();
