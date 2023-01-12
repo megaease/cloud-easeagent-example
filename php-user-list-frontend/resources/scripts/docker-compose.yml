@@ -6,6 +6,6 @@ services:
     environment:
       USER_LIST_URL: "http://docker.for.mac.localhost:18888/user/list"
       CHECK_ROOT_URL: "http://docker.for.mac.localhost:8090/is_root"
-      NET_URL: "http://docker.for.mac.localhost:7116/user"
+      NET_URL: "http://docker.for.mac.localhost:7116/"
     ports:
       - "8081:8081"
