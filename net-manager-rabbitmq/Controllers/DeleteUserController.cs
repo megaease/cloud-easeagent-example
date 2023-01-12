@@ -7,14 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace net.manager.rabbitmq.Controllers;
 [ApiController]
 [Route("[controller]")]
-public class UserController : ControllerBase
+public class DeleteUserController : ControllerBase
 {
     Send send = new Send();
-
-    [HttpGet(Name = "User/{name}")]
-    public void Add(string name)
+    [HttpGet(Name = "DeleteUser/{name}")]
+    public void Delete(string name)
     {
-        send.Publish("add," + name);
+        Console.WriteLine("=================");
+        send.Publish("delete," + name);
     }
 
 }

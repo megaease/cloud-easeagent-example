@@ -24,7 +24,12 @@ $agent->serverReceive(function ($span) use ($agent) {
 
     $netURL = getenv('NET_URL');
     if ($netURL === false) {
-        $netURL = "http://localhost:7116/user";
+        $netURL = "http://localhost:7116/";
+    }
+
+    function deleteUser($name)
+    {
+        echo "delete user " . $name;
     }
 
     $httpClient = new Client();
@@ -41,15 +46,30 @@ $agent->serverReceive(function ($span) use ($agent) {
         var name = document.getElementById("fname").value
         var xmlHttp = new XMLHttpRequest();
         xmlHttp.onreadystatechange = function() { 
-            if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+            if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
                 console.log(xmlHttp.responseText);
-            setTimeout(function(){
-                window.location.reload(1);
-                }, 1000);
+                setTimeout(function(){
+                    window.location.reload(1);
+                    }, 1000);
+            }
         }
-        xmlHttp.open("GET", "' . $netURL . '?name=" + name, true); // true for asynchronous 
+        xmlHttp.open("GET", "' . $netURL . 'user?name=" + name, true); // true for asynchronous 
         xmlHttp.send(null);
-    }',
+    }
+    function deleteUser(name) {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() { 
+            if (xmlHttp.readyState == 4 && xmlHttp.status == 200){
+                console.log(xmlHttp.responseText);
+                setTimeout(function(){
+                    window.location.reload(1);
+                    }, 1000);
+            }
+        }
+        xmlHttp.open("GET", "' . $netURL . 'deleteUser?name=" + name, true); // true for asynchronous 
+        xmlHttp.send(null);
+    }
+    ',
     '</script><br/>';
     if (count($data)) {
         // Open the table
@@ -82,7 +102,7 @@ $agent->serverReceive(function ($span) use ($agent) {
             echo "<td>" . $stand->name . "</td>";
             echo "<td>" . $isRoot . "</td>";
             echo "<td>" . $stand->createTime . "</td>";
-            echo '<td></td>';
+            echo '<td><input type = "button" onclick = "deleteUser(\'' . $stand->name . '\')" value = "DELETE"/></td>';
             // echo "<td><a href=\"" . $netURL . "?name=" . $stand->name . "\" class=\"button\" data-method=\"delete\">DELETE</a></td>";
             echo "</tr>";
         }
@@ -90,7 +110,7 @@ $agent->serverReceive(function ($span) use ($agent) {
         <td><input type="text" id="fname" name="fname"></td>
         <td></td>
         <td></td>
-        <td><input type = "button" onclick = "addUser(\'aaa\')" value = "ADD"></td>
+        <td><input type = "button" onclick = "addUser()" value = "ADD"/></td>
         </tr>';
 
         echo "</table>";

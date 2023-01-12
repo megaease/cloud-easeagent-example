@@ -3,6 +3,15 @@ using zipkin4net.Middleware;
 using zipkin4net.Transport.Http;
 
 var builder = WebApplication.CreateBuilder(args);
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      builder =>
+                      {
+                          builder.WithOrigins("*");
+                      });
+});
 
 // Add services to the container.
 
@@ -13,7 +22,7 @@ builder.Services.AddSwaggerGen();
 
 easeagent.Agent.RegisterFromYaml(Environment.GetEnvironmentVariable("EASEAGENT_CONFIG"));
 builder.Services.AddHttpClient("UserManager").AddHttpMessageHandler(provider =>
-    TracingHandler.WithoutInnerHandler(easeagent.Agent.GetServiceName()));;
+    TracingHandler.WithoutInnerHandler(easeagent.Agent.GetServiceName())); ;
 
 var app = builder.Build();
 
@@ -29,6 +38,9 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors(MyAllowSpecificOrigins);
+
 
 Receive receive = new Receive(app.Services.GetService<IHttpClientFactory>());
 app.Lifetime.ApplicationStarted.Register(() => new Thread(receive.Start).Start());
