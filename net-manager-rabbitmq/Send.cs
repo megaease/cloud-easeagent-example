@@ -29,7 +29,7 @@ namespace net.manager.rabbitmq
             Trace trace = Trace.Current.Child();
             trace.Record(Annotations.ProducerStart());
             trace.Record(Annotations.Rpc(queue));
-
+            Agent.RecordMiddleware(trace, easeagent.Middleware.Type.RabbitMQ);
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {

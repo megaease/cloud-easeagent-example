@@ -71,6 +71,7 @@ namespace net.manager.rabbitmq
                             return null;
                         }
                     });
+                    Agent.RecordMiddleware(trace, easeagent.Middleware.Type.RabbitMQ);
                     trace.Record(Annotations.ConsumerStart());
                     trace.Record(Annotations.Rpc(ea.RoutingKey));
                     consumerRow(message);
