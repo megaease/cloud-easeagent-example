@@ -74,7 +74,7 @@ namespace net.manager.rabbitmq
                     Agent.RecordMiddleware(trace, easeagent.Middleware.Type.RabbitMQ);
                     trace.Record(Annotations.ConsumerStart());
                     trace.Record(Annotations.Rpc(ea.RoutingKey));
-                    consumerRow(message);
+                    Agent.Current(trace, () => consumerRow(message));
                     trace.Record(Annotations.ConsumerStop());
                 };
                 channel.BasicConsume(queue: config.Queue,
@@ -123,7 +123,7 @@ namespace net.manager.rabbitmq
                     }
                     else
                     {
-                        Console.WriteLine("call url({0}) success", url, response.ToString());
+                        Console.WriteLine("call url({0}) success {1}", url, response.ToString());
                     }
 
                 }
