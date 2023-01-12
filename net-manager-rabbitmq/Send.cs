@@ -15,11 +15,7 @@ namespace net.manager.rabbitmq
         public Send()
         {
             RabbitMQConfig config = new RabbitMQConfig();
-            factory = new ConnectionFactory()
-            {
-                HostName = config.HostName,
-                Port = config.Port
-            };
+            factory = config.CreateFactory();
             this.queue = config.Queue;
         }
 

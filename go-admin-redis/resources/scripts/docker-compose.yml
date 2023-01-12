@@ -24,6 +24,6 @@ services:
     environment:
       REDIS_HOST_AND_PORT: "redis_db:6379"
     ports:
-      - "8090"
+      - "8090:8090"
 
 

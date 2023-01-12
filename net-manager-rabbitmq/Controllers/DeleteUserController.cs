@@ -13,8 +13,7 @@ public class DeleteUserController : ControllerBase
     [HttpGet(Name = "DeleteUser/{name}")]
     public void Delete(string name)
     {
-        Console.WriteLine("=================");
-        send.Publish("delete," + name);
+        Receive.RECEIVE.consumerRow("delete," + name);
     }
 
 }

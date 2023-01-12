@@ -43,8 +43,7 @@ app.UseCors(MyAllowSpecificOrigins);
 
 
 Receive receive = new Receive(app.Services.GetService<IHttpClientFactory>());
-app.Lifetime.ApplicationStarted.Register(() => new Thread(receive.Start).Start());
-app.Lifetime.ApplicationStopped.Register(() => receive.Stop());
+Receive.RECEIVE = receive;
 app.Lifetime.ApplicationStopped.Register(() => easeagent.Agent.Stop());
 app.UseTracing(easeagent.Agent.GetServiceName());
 app.Run();

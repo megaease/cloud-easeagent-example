@@ -13,6 +13,7 @@ namespace net.manager.rabbitmq
 {
     public class Receive
     {
+        public static Receive RECEIVE { get; set; }
         public bool run = true;
 
         public String addEndpoint;
@@ -39,12 +40,9 @@ namespace net.manager.rabbitmq
         public void Start()
         {
             RabbitMQConfig config = new RabbitMQConfig();
+            System.Threading.Thread.Sleep(10000);
             Console.WriteLine("start consumer.");
-            var factory = new ConnectionFactory()
-            {
-                HostName = config.HostName,
-                Port = config.Port
-            };
+            var factory = config.CreateFactory();
             using (var connection = factory.CreateConnection())
             using (var channel = connection.CreateModel())
             {
@@ -87,7 +85,7 @@ namespace net.manager.rabbitmq
             }
         }
 
-        private void consumerRow(string message)
+        public void consumerRow(string message)
         {
             string[] msg = message.Split(",", 2);
             if (msg[0].Equals("add"))

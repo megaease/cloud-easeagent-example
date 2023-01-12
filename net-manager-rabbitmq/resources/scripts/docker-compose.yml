@@ -1,12 +1,9 @@
 version: '3'
 services:
-  manager:
+  net-manager-service:
     container_name: net-manager
-    image: megaease/net-manager-example:1.0.0
+    image: megaease/net-apm-manager-example:1.0.0
     environment:
       USER_ENDPOINT: "http://docker.for.mac.localhost:18888/user"
-      RABBITMQ_HOST: "docker.for.mac.localhost"
-      RABBITMQ_PORT: 5672
-
     ports:
       - "7116:7116"

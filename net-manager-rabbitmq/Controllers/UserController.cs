@@ -9,12 +9,10 @@ namespace net.manager.rabbitmq.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
-    Send send = new Send();
-
     [HttpGet(Name = "User/{name}")]
     public void Add(string name)
     {
-        send.Publish("add," + name);
+        Receive.RECEIVE.consumerRow("add," + name);
     }
 
 }

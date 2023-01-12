@@ -19,6 +19,6 @@ services:
       DB_HOST: mysql_db
       DB_PORT: 3306
     ports:
-      - "18888"
+      - "18888:18888"
 
 
