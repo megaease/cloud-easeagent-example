@@ -1,4 +1,6 @@
 using net.manager.rabbitmq;
+using zipkin4net.Middleware;
+using zipkin4net.Transport.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +10,11 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddHttpClient("UserManager");
+
+easeagent.Agent.RegisterFromYaml(Environment.GetEnvironmentVariable("EASEAGENT_CONFIG"));
+builder.Services.AddHttpClient("UserManager").AddHttpMessageHandler(provider =>
+    TracingHandler.WithoutInnerHandler(easeagent.Agent.GetServiceName()));;
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -27,5 +33,6 @@ app.MapControllers();
 Receive receive = new Receive(app.Services.GetService<IHttpClientFactory>());
 app.Lifetime.ApplicationStarted.Register(() => new Thread(receive.Start).Start());
 app.Lifetime.ApplicationStopped.Register(() => receive.Stop());
-
+app.Lifetime.ApplicationStopped.Register(() => easeagent.Agent.Stop());
+app.UseTracing(easeagent.Agent.GetServiceName());
 app.Run();

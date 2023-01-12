@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
+using zipkin4net.Propagation;
+using zipkin4net;
+using easeagent;
 
 namespace net.manager.rabbitmq
 {
@@ -57,7 +60,21 @@ namespace net.manager.rabbitmq
                     var body = ea.Body.ToArray();
                     var message = Encoding.UTF8.GetString(body);
                     Console.WriteLine(" [x] Received {0}", message);
+                    Trace trace = Agent.ExtractToTrace((key) =>
+                    {
+                        if (ea.BasicProperties.Headers.ContainsKey(key))
+                        {
+                            return System.Text.Encoding.Default.GetString((byte[])ea.BasicProperties.Headers[key]);
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    });
+                    trace.Record(Annotations.ConsumerStart());
+                    trace.Record(Annotations.Rpc(ea.RoutingKey));
                     consumerRow(message);
+                    trace.Record(Annotations.ConsumerStop());
                 };
                 channel.BasicConsume(queue: config.Queue,
                                      autoAck: true,
