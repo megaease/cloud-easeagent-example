@@ -14,7 +14,7 @@ services:
     depends_on:
       - mysql_db
     container_name: java-user-list
-    image: megaease/java-apm-user-list-mysql-example:1.0.0
+    image: megaease/java-apm-user-list-mysql-example:1.0.1
     environment:
       DB_HOST: mysql_db
       DB_PORT: 3306
