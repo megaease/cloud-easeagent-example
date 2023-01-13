@@ -13,7 +13,7 @@ public class DeleteUserController : ControllerBase
     [HttpGet(Name = "DeleteUser/{name}")]
     public void Delete(string name)
     {
-        Receive.RECEIVE.consumerRow("delete," + name);
+        HttpClientProxy.CLIENT.CallDeleteAsync(name);
     }
 
 }

@@ -12,7 +12,7 @@ public class UserController : ControllerBase
     [HttpGet(Name = "User/{name}")]
     public void Add(string name)
     {
-        Receive.RECEIVE.consumerRow("add," + name);
+        HttpClientProxy.CLIENT.CallAddAsync(name);
     }
 
 }

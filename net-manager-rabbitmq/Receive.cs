@@ -16,26 +16,10 @@ namespace net.manager.rabbitmq
         public static Receive RECEIVE { get; set; }
         public bool run = true;
 
-        public String addEndpoint;
-        public String deleteEndpoint;
-
-        private IHttpClientFactory clientFactory;
-
+        private HttpClientProxy httpClientProxy;
         public Receive(IHttpClientFactory clientFactory)
         {
-            string? endpoint = Environment.GetEnvironmentVariable("USER_ENDPOINT");
-            if (endpoint == null)
-            {
-                this.addEndpoint = "http://127.0.0.1:18888/user/add/";
-                this.deleteEndpoint = "http://127.0.0.1:18888/user/delete/";
-            }
-            else
-            {
-                this.addEndpoint = endpoint + "/add/";
-                this.deleteEndpoint = endpoint + "/delete/";
-
-            }
-            this.clientFactory = clientFactory;
+            httpClientProxy = new HttpClientProxy(clientFactory);
         }
         public void Start()
         {
@@ -90,48 +74,13 @@ namespace net.manager.rabbitmq
             string[] msg = message.Split(",", 2);
             if (msg[0].Equals("add"))
             {
-                callAddAsync(msg[1]);
+                HttpClientProxy.CLIENT.CallAddAsync(msg[1]);
             }
             if (msg[0].Equals("delete"))
             {
-                callDelete(msg[1]);
+                HttpClientProxy.CLIENT.CallDeleteAsync(msg[1]);
             }
         }
-
-        private async void callAddAsync(string name)
-        {
-            await callGetAsync(addEndpoint + name);
-        }
-
-        private async void callDelete(string name)
-        {
-            await callGetAsync(deleteEndpoint + name);
-        }
-
-        private async Task callGetAsync(string url)
-        {
-            using (var httpClient = clientFactory.CreateClient("UserManager"))
-            {
-                try
-                {
-                    var response = await httpClient.GetAsync(url);
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        Console.WriteLine("call url({0}) fail {1}", url, response.ToString());
-                    }
-                    else
-                    {
-                        Console.WriteLine("call url({0}) success {1}", url, response.ToString());
-                    }
-
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("call url({0}) error {1}", url, e.ToString());
-                }
-            }
-        }
-
 
         public void Stop()
         {

@@ -20,6 +20,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//init easeagent
 easeagent.Agent.RegisterFromYaml(Environment.GetEnvironmentVariable("EASEAGENT_CONFIG"));
 builder.Services.AddHttpClient("UserManager").AddHttpMessageHandler(provider =>
     TracingHandler.WithoutInnerHandler(easeagent.Agent.GetServiceName())); ;
@@ -42,8 +43,11 @@ app.MapControllers();
 app.UseCors(MyAllowSpecificOrigins);
 
 
-Receive receive = new Receive(app.Services.GetService<IHttpClientFactory>());
-Receive.RECEIVE = receive;
+HttpClientProxy.CLIENT = new HttpClientProxy(app.Services.GetService<IHttpClientFactory>())
+
+//register a stop for easeagent
 app.Lifetime.ApplicationStopped.Register(() => easeagent.Agent.Stop());
+
+//tracing for http server
 app.UseTracing(easeagent.Agent.GetServiceName());
 app.Run();
