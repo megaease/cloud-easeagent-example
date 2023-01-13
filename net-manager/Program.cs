@@ -1,4 +1,4 @@
-using net.manager.rabbitmq;
+using net.manager;
 using zipkin4net.Middleware;
 using zipkin4net.Transport.Http;
 
@@ -23,7 +23,7 @@ builder.Services.AddSwaggerGen();
 //init easeagent
 easeagent.Agent.RegisterFromYaml(Environment.GetEnvironmentVariable("EASEAGENT_CONFIG"));
 builder.Services.AddHttpClient("UserManager").AddHttpMessageHandler(provider =>
-    TracingHandler.WithoutInnerHandler(easeagent.Agent.GetServiceName())); ;
+    TracingHandler.WithoutInnerHandler(easeagent.Agent.GetServiceName()));
 
 var app = builder.Build();
 
@@ -43,7 +43,7 @@ app.MapControllers();
 app.UseCors(MyAllowSpecificOrigins);
 
 
-HttpClientProxy.CLIENT = new HttpClientProxy(app.Services.GetService<IHttpClientFactory>())
+HttpClientProxy.CLIENT = new HttpClientProxy(app.Services.GetService<IHttpClientFactory>());
 
 //register a stop for easeagent
 app.Lifetime.ApplicationStopped.Register(() => easeagent.Agent.Stop());

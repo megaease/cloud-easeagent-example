@@ -9,7 +9,7 @@ using zipkin4net.Propagation;
 using zipkin4net;
 using easeagent;
 
-namespace net.manager.rabbitmq
+namespace net.manager
 {
     public class Receive
     {

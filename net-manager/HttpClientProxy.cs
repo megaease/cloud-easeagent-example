@@ -1,4 +1,4 @@
-namespace net.manager.rabbitmq
+namespace net.manager
 {
     public class HttpClientProxy
     {

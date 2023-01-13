@@ -4,7 +4,7 @@ using System.Text;
 using zipkin4net;
 using zipkin4net.Propagation;
 
-namespace net.manager.rabbitmq
+namespace net.manager
 {
     public class Send
     {
