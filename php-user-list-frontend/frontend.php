@@ -16,8 +16,6 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 function callServer(Client $client, string $url, Agent $agent, Span $parent, string $spanName): string
 {
-    // echo "call server: " . $url;
-    // echo "</br>";
     $span = $agent->startClientSpan($parent, $spanName);
     $request = new \GuzzleHttp\Psr7\Request('GET', $url, $agent->injectorHeaders($span));
     $result = "";
@@ -96,10 +94,6 @@ $agent->serverReceive(function ($span) use ($agent) {
     $checkRootURL = getenv('CHECK_ROOT_URL');
     if ($checkRootURL === false) {
         $checkRootURL = "http://127.0.0.1:8090/is_root";
-    }
-    $netURL = getenv('NET_URL');
-    if ($netURL === false) {
-        $netURL = "http://localhost:7116/";
     }
     $httpClient = new Client();
     if (callNet($agent, $span, $httpClient)) {
